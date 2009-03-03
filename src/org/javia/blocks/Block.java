@@ -6,6 +6,7 @@ import android.graphics.Paint;
 class Block {
     BlockType type;
     int posX, posY;
+    int available;
 
     Block(BlockType type, int x, int y) {
 	this.type = type;
