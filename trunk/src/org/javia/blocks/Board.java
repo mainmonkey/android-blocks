@@ -35,19 +35,56 @@ class Board {
 
     Point auxPoint = new Point();
     void move(int dx, int dy) {
-	if (active) {
-	    if (Math.abs(dx) > Math.abs(dy)) {
-		dx = Math.max(dx, -64);
-		dx = Math.min(dx, 64);
-		BlockType type = active.type;
-		Point[] border = dx < 0 ? type.left : type.right;
-		for (Point p: border) {
-		    auxPoint.set(p.x+dx, p.y);
-		    
-		}
-	    } else {
+	if (active != null) {
+	    int space = spaceAvailable(active, dx < 0 ? LEFT : RIGHT);
+	    if (space > 0) {
 
+	    } else {
+		space = spaceAvailable(active, dy < 0 ? UP : DOWN);
 	    }
 	}
+    }
+
+    int spaceAvailable(Block block, int dir) {
+	for (Block b: blocks) {
+	    b.available = -1;
+	}
+	return spaceAvRec(block, dir);
+    }
+
+    static final int 
+	RIGHT = 1,
+	UP    = 2,
+	LEFT  = 3,
+	DOWN  = 4;
+
+    int spaceAvRec(Block block, int dir) {
+	if (block.available >= 0) {
+	    return block.available;
+	}
+	int available = 64;
+	Point[] frontier = block.type.frontier[dir];
+	int move = (dir == LEFT || dir == UP) ? -64 : +64;
+	if (dir == LEFT || dir == RIGHT) {
+	    for (Point p: frontier) {
+		Block next = findBlockAt(p.x + move, p.y);
+		if (next != null) {
+		    int dist = Math.abs(next.posX - block.posX) % 64;
+		    int localAv = spaceAvRec(next, dir) + dist;
+		    available = Math.min(available, localAv);
+		}		
+	    }
+	} else {
+	    for (Point p: frontier) {
+		Block next = findBlockAt(p.x, p.y + move);
+		if (next != null) {
+		    int dist = Math.abs(next.posY - block.posY) % 64;
+		    int localAv = spaceAvRec(next, dir) + dist;
+		    available = Math.min(available, localAv);
+		}		
+	    }
+	}
+	block.available = available;
+	return available;
     }
 }
