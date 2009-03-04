@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.SubMenu;
 import android.view.MenuItem;
+import android.util.Log;
 
 public class Blocks extends Activity
 {
@@ -66,5 +67,9 @@ public class Blocks extends Activity
 
     public boolean onOptionsItemSelected(MenuItem item) {
 	return false;
+    }
+
+    static void log(String msg) {
+	Log.d("Blocks", msg);
     }
 }

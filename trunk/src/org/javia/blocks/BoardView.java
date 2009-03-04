@@ -52,19 +52,22 @@ class BoardView extends View {
 	    float effY = downY - border;
 	    effY = Math.max(effY, 0);
 	    effY = Math.min(effY, 6*64);
-	    board.setActive(Math.round(downX), Math.round(effY));
+	    Block active = board.setActive(Math.round(downX), Math.round(effY));
+	    if (active != null) {
+		downX = (downX - active.posX);
+		downY = (downY - active.posY);
+	    }
 	    break;
 
 	case MotionEvent.ACTION_MOVE:
 	    float dx = x - downX;
 	    float dy = y - downY;
 	    int idx = Math.round(dx), idy = Math.round(dy);
-	    if (idx != 0 && idy != 0) {
-		board.move(idx, idy);
+	    if (board.moveTo(idx, idy)) {		
+		invalidate();
 	    }
 	    break;
 	}
 	return true;
     }
-
 }

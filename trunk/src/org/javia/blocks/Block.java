@@ -23,4 +23,8 @@ class Block {
 	type.draw(canvas);
 	canvas.translate(-posX, -posY);
     }
+
+    public String toString() {
+	return "block " + type + " (" + posX + ", " + posY + ") ";
+    }
 }

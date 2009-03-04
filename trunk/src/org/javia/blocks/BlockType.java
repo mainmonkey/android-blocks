@@ -9,7 +9,6 @@ abstract class BlockType {
     abstract boolean contains(int x, int y);
     Path path;
     Point[][] frontier = new Point[4][];
-    // up, down, left, right;
     
     protected int size;
     static protected Paint paintBorder = new Paint(), paintFill = new Paint();
@@ -90,17 +89,22 @@ class BigSquareBlock extends BlockType {
 	path.close();
 	}
 
+	int s1 = size-1;
 	int s2 = size+size-1;
 	Point 
-	    p0 = new Point(0, 0), 
-	    p1 = new Point(0, s2),
-	    p2 = new Point(s2, s2),
-	    p3 = new Point(s2, 0);
+	    p0 = new Point(0, 0),
+	    p1 = new Point(0, s1),
+	    p2 = new Point(0, s2),
+	    p3 = new Point(s1, s2),
+	    p4 = new Point(s2, s2),
+	    p5 = new Point(s2, s1),
+	    p6 = new Point(s2, 0),
+	    p7 = new Point(s1, 0);
 	
-	setFrontier(new Point[]{p0, p1},
-		    new Point[]{p1, p2},
-		    new Point[]{p2, p3},	
-		    new Point[]{p3, p0});
+	setFrontier(new Point[]{p0, p1, p2},
+		    new Point[]{p2, p3, p4},
+		    new Point[]{p4, p5, p6},
+		    new Point[]{p6, p7, p0});
     }
 
     boolean contains(int x, int y) {
@@ -136,13 +140,15 @@ class HorizBarBlock extends BlockType {
 	Point 
 	    p0 = new Point(0, 0), 
 	    p1 = new Point(0, s1),
-	    p2 = new Point(s2, s1),
-	    p3 = new Point(s2, 0);
+	    p2 = new Point(s1, s1),
+	    p3 = new Point(s2, s1),
+	    p4 = new Point(s2, 0),
+	    p5 = new Point(s1, 0);
 
 	setFrontier(new Point[]{p0, p1},	
-		    new Point[]{p1, p2},
-		    new Point[]{p2, p3},
-		    new Point[]{p3, p0});
+		    new Point[]{p1, p2, p3},
+		    new Point[]{p3, p4},
+		    new Point[]{p4, p5, p0});
     }
 
     boolean contains(int x, int y) {
@@ -168,15 +174,17 @@ class VertBarBlock extends BlockType {
 	int s1 = size-1;
 	int s2 = size+size-1;
 	Point 
-	    p0 = new Point(0, 0), 
-	    p1 = new Point(0, s2),
-	    p2 = new Point(s1, s2),
-	    p3 = new Point(s1, 0);
+	    p0 = new Point(0, 0),
+	    p1 = new Point(0, s1),
+	    p2 = new Point(0, s2),
+	    p3 = new Point(s1, s2),
+	    p4 = new Point(s1, s1),
+	    p5 = new Point(s1, 0);
 	
-	setFrontier(new Point[]{p0, p1},
-		    new Point[]{p1, p2},
+	setFrontier(new Point[]{p0, p1, p2},
 		    new Point[]{p2, p3},
-		    new Point[]{p3, p0});
+		    new Point[]{p3, p4, p5},
+		    new Point[]{p5, p0});
     }
 
     boolean contains(int x, int y) {
@@ -247,20 +255,21 @@ class TriDownBlock extends BlockType {
 	int s1 = size;
 	int s2 = size+size-1;
 	Point 
-	    p0 = new Point(0, 0), 
-	    p1 = new Point(0, s1),
-	    p2 = new Point(0, s2),
-	    
-	    p3 = new Point(s1, s2),
-	    p4 = new Point(s1, s1),
-	    p5 = new Point(s2, s1),
-	    p6 = new Point(s2, 0),
-	    p7 = new Point(s1, 0);
+	    p0 = new Point(0, s1), 
+	    p1 = new Point(0, s2),
 
-	setFrontier(new Point[]{p0, p6, p7},
-		    new Point[]{p2, p3, p4, p5},
-		    new Point[]{p0, p1, p2},
-		    new Point[]{p3, p4, p5, p6});
+	    p2 = new Point(s1, s2),
+	    p3 = new Point(s2, s2),
+	    p4 = new Point(s2, s1),
+	    p5 = new Point(s2, 0),
+
+	    p6 = new Point(s1, 0),
+	    p7 = new Point(s1, s1);
+
+	setFrontier(new Point[]{p0, p1, p6, p7},
+		    new Point[]{p1, p2, p3},
+		    new Point[]{p3, p4, p5},
+		    new Point[]{p5, p6, p7, p0});
     }
 
     boolean contains(int x, int y) {
