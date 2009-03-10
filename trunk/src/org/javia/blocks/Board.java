@@ -14,9 +14,11 @@ class Board {
 
     Block blocks[];
     Block active;
+    Block big;
 
     Board(int sizeX, int sizeY, int size, Block blocks[]) {
 	this.blocks = blocks;
+	this.big    = blocks[13];
     }
 
     void draw(Canvas canvas) {
@@ -41,28 +43,50 @@ class Board {
 	return active;
     }
 
+    int snap(int x) {
+	int d = x % 64;
+	if (d < 8) {
+	    return x - d;
+	}
+	if (64 - d < 8) {
+	    return x + (64 - d);
+	}
+	return x;
+    }
+
     boolean moveTo(int x, int y) {
+	boolean changed = false;
 	if (active != null) {
-	    final int dx = x - active.posX;
-	    final int dy = y - active.posY;
-	    int space, dir; 
-	    Blocks.log("dx " + dx + ' ' + dy);
-	    if (dx != 0 && (space = spaceAvailable(active, (dir = (dx < 0 ? LEFT : RIGHT)))) > 0) {
-		Blocks.log("move horiz " + dir + ' ' + space);
-		move(active, dir, Math.min(space, Math.abs(dx)));
-		return true;
-	    } 
-	    if (dy != 0 && (space = spaceAvailable(active, (dir = (dy < 0 ? UP : DOWN)))) > 0) {
-		Blocks.log("move vert " + dir + ' ' + space);
-		move(active, dir, Math.min(space, Math.abs(dy)));
-		return true;
+	    //snap to 64px lines
+	    x = snap(x);
+	    y = snap(y);
+	    int dx = x - active.posX;
+	    int dy = y - active.posY;
+	    int space, dir;
+	    for (int i = 0; i < 2; ++i) {
+		if (dx != 0 && (space = spaceAvailable(active, (dir = (dx < 0 ? LEFT : RIGHT)))) > 0) {
+		    // Blocks.log("move horiz " + dir + ' ' + space);
+		    move(active, dir, Math.min(space, Math.abs(dx)));
+		    dx = 0;
+		    changed = true;
+		} 
+		if (dy != 0 && (space = spaceAvailable(active, (dir = (dy < 0 ? UP : DOWN)))) > 0) {
+		    // Blocks.log("move vert " + dir + ' ' + space);
+		    move(active, dir, Math.min(space, Math.abs(dy)));
+		    dy = 0;
+		    changed = true;
+		}
 	    }
 	}
-	return false;
+	return changed;
+    }
+
+    boolean isEndPosition() {
+	return big.posX == 3 * 64 && big.posY == 4 * 64;
     }
 
     private void move(Block block, int dir, int amount) {
-	Blocks.log("move " + block + ' ' + dir + ' ' + amount);
+	// Blocks.log("move " + block + ' ' + dir + ' ' + amount);
 	if (amount <= 0) {
 	    return;
 	}
@@ -121,7 +145,7 @@ class Board {
 		final int aux = (dir == LEFT || dir == RIGHT) ? x-next.posX : y-next.posY;
 		final int dist = Math.abs(aux) % 64;
 		localAv = spaceAvRec(next, dir) + dist;
-		Blocks.log("av " + dir + ' ' + newX + ' ' + newY + ' ' + block + ' ' + next + ' ' + dist + ' ' + localAv);
+		// Blocks.log("av " + dir + ' ' + newX + ' ' + newY + ' ' + block + ' ' + next + ' ' + dist + ' ' + localAv);
 	    }
 	    available = Math.min(available, localAv);
 	    if (available <= 0) {

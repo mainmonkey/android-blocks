@@ -6,6 +6,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.graphics.Paint;
 import android.view.MotionEvent;
+import android.widget.Toast;
 
 class BoardView extends View {
     Board board;
@@ -13,9 +14,11 @@ class BoardView extends View {
     int border;
     Paint paint = new Paint();
     float downX, downY;
+    Context context;
 
     BoardView(Context context, Board board) {
 	super(context);
+	this.context = context;
 	this.board = board;
 	paint.setColor(0xff000000);
 	paint.setStyle(Paint.Style.FILL);
@@ -51,7 +54,7 @@ class BoardView extends View {
 	    downY = y;
 	    float effY = downY - border;
 	    effY = Math.max(effY, 0);
-	    effY = Math.min(effY, 6*64);
+	    effY = Math.min(effY, 6*64-1);
 	    Block active = board.setActive(Math.round(downX), Math.round(effY));
 	    if (active != null) {
 		downX = (downX - active.posX);
@@ -65,6 +68,9 @@ class BoardView extends View {
 	    int idx = Math.round(dx), idy = Math.round(dy);
 	    if (board.moveTo(idx, idy)) {		
 		invalidate();
+		if (board.isEndPosition()) {
+		    Toast.makeText(context, "Solved!", Toast.LENGTH_LONG).show();
+		}
 	    }
 	    break;
 	}
