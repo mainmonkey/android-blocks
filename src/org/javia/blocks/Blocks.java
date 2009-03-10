@@ -27,7 +27,6 @@ public class Blocks extends Activity
 	{12, 13, 18, 19, 24, 25, 26, 16, 11, 1, 4, 2, 22, 14}
     };
 
-    Board board;
     static private final BlockType 
 	smallSq  = new SmallSquareBlock(SIZE),
 	bigSq    = new BigSquareBlock(SIZE),
@@ -54,19 +53,26 @@ public class Blocks extends Activity
 	return blocks;
     }
 	    
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-	board = new Board(5, 6, 64, getConfig(0));	
-        setContentView(new BoardView(this, board));
+	setLevel(0);
+    }
+
+    void setLevel(int level) {
+        setContentView(new BoardView(this, new Board(5, 6, 64, getConfig(level))));	
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
+	for (int i = 0; i < initPos.length; ++i) {
+	    menu.add(0, i, 0, "Level " + (i+1));
+	}
 	return true;	
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-	return false;
+	int id = item.getItemId();
+	setLevel(id);
+	return true;
     }
 
     static void log(String msg) {
