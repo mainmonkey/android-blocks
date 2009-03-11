@@ -10,8 +10,8 @@ class Block {
 
     Block(BlockType type, int x, int y) {
 	this.type = type;
-	posX = x;
-	posY = y;
+	posX = x * Blocks.SIZE;
+	posY = y * Blocks.SIZE;
     }
     
     boolean contains(int x, int y) {
@@ -31,20 +31,4 @@ class Block {
     int getAvailable() {
 	return available;
     }
-
-    /*
-    int distanceTo(Block block, int dir) {
-	switch (dir) {
-	case Board.LEFT:
-	    return Math.abs(posX - block.posX) & 0x3f;
-	case Board.RIGHT:
-	    return 64 - Math.abs(posX - block.posX) & 0x3f;
-	case Board.UP:
-	    return Math.abs(posY - block.posY) & 0x3f;
-	case Board.DOWN:
-	    return 64 - Math.abs(posY - block.posY) & 0x3f;
-	}
-	return 0;
-    }
-    */
 }

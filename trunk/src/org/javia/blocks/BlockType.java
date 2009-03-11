@@ -6,22 +6,24 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 
 abstract class BlockType {
+    static final int size = Blocks.SIZE;
+
     abstract boolean contains(int x, int y);
     Path path;
     Point[][] frontier = new Point[4][];
     
-    protected int size;
     static protected Paint paintBorder = new Paint(), paintFill = new Paint();
     static {
 	paintBorder.setColor(0xff000000);
 	paintBorder.setStyle(Paint.Style.STROKE);
-	paintFill.setColor(0xff80a080);
+	paintFill.setColor(0xffc0a0b0);
 	paintFill.setStyle(Paint.Style.FILL);
     }
 
-    BlockType(int size) {
-	this.size = size;
+    /*
+    BlockType() {
     }
+    */
 
     void draw(Canvas canvas) {	
 	canvas.drawPath(path, paintFill);
@@ -37,8 +39,7 @@ abstract class BlockType {
 }
 
 class SmallSquareBlock extends BlockType {
-    SmallSquareBlock(int size) {
-	super(size);
+    SmallSquareBlock() {
 	{
 	    int s1 = size-2;
 	    path = new Path();
@@ -68,6 +69,11 @@ class SmallSquareBlock extends BlockType {
 	// Blocks.log("contains " + x + ' ' + y + ' ' + ret);
 	return ret;
     }
+
+    void draw(Canvas canvas) {
+	super.draw(canvas);
+	canvas.drawPoint(size-2, size-2, paintBorder);
+    }
 }
 
 class BigSquareBlock extends BlockType {
@@ -75,12 +81,11 @@ class BigSquareBlock extends BlockType {
 
     static {
 	green.setStyle(Paint.Style.FILL);
-	green.setColor(0xff40d040);
+	green.setColor(0xffb070a0);
 	green.setAntiAlias(true);
     }
 
-    BigSquareBlock(int size) {
-	super(size);
+    BigSquareBlock() {
 	{
 	int s2 = size+size-2;
 	path = new Path();
@@ -117,23 +122,23 @@ class BigSquareBlock extends BlockType {
     void draw(Canvas canvas) {
 	super.draw(canvas);
 	canvas.drawCircle(size, size, size/2, green);
+	canvas.drawPoint(size+size-2, size+size-2, paintBorder);
       	// canvas.drawPath(path, green);
 	// canvas.drawPath(path, paintBorder);	
     }
 }
 
 class HorizBarBlock extends BlockType {
-    HorizBarBlock(int size) {
-	super(size);
+    HorizBarBlock() {
 	{
-	int s1 = size-2;
-	int s2 = size+size-2;
-	path = new Path();
-	path.moveTo(1, 1);
-	path.lineTo(1, s1);
-	path.lineTo(s2, s1);
-	path.lineTo(s2, 1);
-	path.close();
+	    int s1 = size-2;
+	    int s2 = size+size-2;
+	    path = new Path();
+	    path.moveTo(1, 1);
+	    path.lineTo(1, s1);
+	    path.lineTo(s2, s1);
+	    path.lineTo(s2, 1);
+	    path.close();
 	}
 
 	int s1 = size-1;
@@ -157,20 +162,24 @@ class HorizBarBlock extends BlockType {
 	return x >= 0 && x < size+size &&
 	    y >= 0 && y < size;
     }
+
+    void draw(Canvas canvas) {
+	super.draw(canvas);
+	canvas.drawPoint(size+size-2, size-2, paintBorder);
+    }
 }
 
 class VertBarBlock extends BlockType {
-    VertBarBlock(int size) {
-	super(size);
+    VertBarBlock() {
 	{
-	int s1 = size-2;
-	int s2 = size+size-2;
-	path = new Path();
-	path.moveTo(1, 1);
-	path.lineTo(1, s2);
-	path.lineTo(s1, s2);
-	path.lineTo(s1, 1);
-	path.close();
+	    int s1 = size-2;
+	    int s2 = size+size-2;
+	    path = new Path();
+	    path.moveTo(1, 1);
+	    path.lineTo(1, s2);
+	    path.lineTo(s1, s2);
+	    path.lineTo(s1, 1);
+	    path.close();
 	}
 
 	int s1 = size-1;
@@ -193,22 +202,26 @@ class VertBarBlock extends BlockType {
 	return x >= 0 && x < size &&
 	    y >= 0 && y < size+size;
     }
+
+    void draw(Canvas canvas) {
+	super.draw(canvas);
+	canvas.drawPoint(size-2, size+size-2, paintBorder);
+    }
 }
 
 class TriUpBlock extends BlockType {
-    TriUpBlock(int size) {
-	super(size);
+    TriUpBlock() {
 	{
-	int s1 = size - 2;
-	int s2 = size + size - 2;
-	path = new Path();
-	path.moveTo(1, 1);
-	path.lineTo(1, s2);
-	path.lineTo(s1, s2);
-	path.lineTo(s1, s1);
-	path.lineTo(s2, s1);
-	path.lineTo(s2, 1);
-	path.close();
+	    int s1 = size - 2;
+	    int s2 = size + size - 2;
+	    path = new Path();
+	    path.moveTo(1, 1);
+	    path.lineTo(1, s2);
+	    path.lineTo(s1, s2);
+	    path.lineTo(s1, s1);
+	    path.lineTo(s2, s1);
+	    path.lineTo(s2, 1);
+	    path.close();
 	}
 
 	int s1 = size - 1;
@@ -238,22 +251,27 @@ class TriUpBlock extends BlockType {
 	    && y < size + size
 	    && (x < size || y < size);
     }
+
+    void draw(Canvas canvas) {
+	super.draw(canvas);
+	canvas.drawPoint(size-2, size+size-2, paintBorder);
+	canvas.drawPoint(size+size-2, size-2, paintBorder);
+    }
 }
 
 class TriDownBlock extends BlockType {
-    TriDownBlock(int size) {
-	super(size);
+    TriDownBlock() {
 	{
-	int s1 = size+1;
-	int s2 = size+size-2;
-	path = new Path();
-	path.moveTo(1, s1);
-	path.lineTo(1, s2);
-	path.lineTo(s2, s2);
-	path.lineTo(s2, 1);
-	path.lineTo(s1, 1);
-	path.lineTo(s1, s1);
-	path.close();
+	    int s1 = size+1;
+	    int s2 = size+size-2;
+	    path = new Path();
+	    path.moveTo(1, s1);
+	    path.lineTo(1, s2);
+	    path.lineTo(s2, s2);
+	    path.lineTo(s2, 1);
+	    path.lineTo(s1, 1);
+	    path.lineTo(s1, s1);
+	    path.close();
 	}
 
 	int s1 = size;
@@ -268,7 +286,6 @@ class TriDownBlock extends BlockType {
 	    p5 = new Point(s2, 0),
 
 	    p6 = new Point(s1, 0);
-	// p7 = new Point(s1, s1);
 
 	setFrontier(new Point[]{p0, p1, p6},
 		    new Point[]{p1, p2, p3},
@@ -283,5 +300,10 @@ class TriDownBlock extends BlockType {
 	    && x < size + size 
 	    && y < size + size
 	    && (x >= size || y >= size);
+    }
+
+    void draw(Canvas canvas) {
+	super.draw(canvas);
+	canvas.drawPoint(size+size-2, size+size-2, paintBorder);
     }
 }
