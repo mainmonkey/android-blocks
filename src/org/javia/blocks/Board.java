@@ -12,17 +12,35 @@ class Board {
 	RIGHT = 2,
 	UP    = 3;
 
+    static final int SIZE = Blocks.SIZE;
+
     Block blocks[];
     Block active;
     Block big;
+    int width, height;
+    int sizeX, sizeY;
+    int endX, endY;
+    int MAX_X, MAX_Y;
+    Paint paint = new Paint();
+    boolean solved = false;
 
-    Board(int sizeX, int sizeY, int size, Block blocks[]) {
+    Board(int sizeX, int sizeY, int endX, int endY, Block blocks[]) {
 	this.blocks = blocks;
-	this.big    = blocks[13];
+	this.big    = blocks[blocks.length-1];
+	this.sizeX = sizeX;
+	this.sizeY = sizeY;
+	this.endX  = endX;
+	this.endY  = endY;
+	width  = sizeX * SIZE;
+	height = sizeY * SIZE;
+	MAX_X = width  - 1;
+	MAX_Y = height - 1;
+	paint.setColor(0xffffffff);
+	paint.setStyle(Paint.Style.FILL);
     }
 
     void draw(Canvas canvas) {
-	canvas.drawColor(0xffffffff);
+	canvas.drawRect(0, 0, width, height, paint);
 	for (Block block: blocks) {
 	    block.draw(canvas);
 	}
@@ -44,12 +62,13 @@ class Board {
     }
 
     int snap(int x) {
-	int d = x % 64;
+	int d = x % SIZE;
 	if (d < 8) {
 	    return x - d;
 	}
-	if (64 - d < 8) {
-	    return x + (64 - d);
+	int dd = SIZE - d;
+	if (dd < 8) {
+	    return x + dd;
 	}
 	return x;
     }
@@ -57,7 +76,7 @@ class Board {
     boolean moveTo(int x, int y) {
 	boolean changed = false;
 	if (active != null) {
-	    //snap to 64px lines
+	    //snap to grid
 	    x = snap(x);
 	    y = snap(y);
 	    int dx = x - active.posX;
@@ -81,8 +100,12 @@ class Board {
 	return changed;
     }
 
-    boolean isEndPosition() {
-	return big.posX == 3 * 64 && big.posY == 4 * 64;
+    boolean solvedNow() {
+	if (!solved && big.posX == endX * SIZE && big.posY == endY * SIZE) {
+	    solved = true;
+	    return true;
+	}
+	return false;
     }
 
     private void move(Block block, int dir, int amount) {
@@ -104,7 +127,7 @@ class Board {
 		    Blocks.log("same " + p.x + ' ' + p.y + ' ' + amountX + ' ' + amountY);
 		}
 		final int aux = (dir == LEFT || dir == RIGHT) ? x-next.posX : y-next.posY;
-		final int dist = Math.abs(aux) % 64;
+		final int dist = Math.abs(aux) % SIZE;
 		move(next, dir, amount - dist);
 	    }
 	}
@@ -119,31 +142,28 @@ class Board {
 	return spaceAvRec(block, dir);
     }
 
-    private static final int MAX_X = 5*64-1;
-    private static final int MAX_Y = 6*64-1;
-
     private int spaceAvRec(final Block block, final int dir) {
 	int av;
 	if ((av = block.getAvailable()) >= 0) {
 	    return av;
 	}
-	int available = 64;
+	int available = SIZE;
 	Point[] frontier = block.type.frontier[dir];
 	final int x = block.posX;
 	final int y = block.posY;
-	final int moveX = dir == LEFT ? -64 : dir == RIGHT ? 64 : 0;
-	final int moveY = dir == UP ? -64 : dir == DOWN ? 64 : 0;
+	final int moveX = dir == LEFT ? -SIZE : dir == RIGHT ? SIZE : 0;
+	final int moveY = dir == UP ? -SIZE : dir == DOWN ? SIZE : 0;
 	Block next;
 	for (Point p: frontier) {
 	    final int newX = x + p.x + moveX;
 	    final int newY = y + p.y + moveY;
-	    int localAv = 64;
+	    int localAv = SIZE;
 	    if (newX < 0 || newX > MAX_X || newY < 0 || newY > MAX_Y) {
-		localAv = dir == LEFT ? (newX+64) : dir == RIGHT ? (MAX_X + 64 - newX) :
-		    dir == UP ? (newY + 64) : (MAX_Y + 64 - newY);
+		localAv = dir == LEFT ? (newX+SIZE) : dir == RIGHT ? (MAX_X + SIZE - newX) :
+		    dir == UP ? (newY + SIZE) : (MAX_Y + SIZE - newY);
 	    } else if ((next = findBlockAt(newX, newY)) != null) {
 		final int aux = (dir == LEFT || dir == RIGHT) ? x-next.posX : y-next.posY;
-		final int dist = Math.abs(aux) % 64;
+		final int dist = Math.abs(aux) % SIZE;
 		localAv = spaceAvRec(next, dir) + dist;
 		// Blocks.log("av " + dir + ' ' + newX + ' ' + newY + ' ' + block + ' ' + next + ' ' + dist + ' ' + localAv);
 	    }
