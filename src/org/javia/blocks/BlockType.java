@@ -16,14 +16,9 @@ abstract class BlockType {
     static {
 	paintBorder.setColor(0xff000000);
 	paintBorder.setStyle(Paint.Style.STROKE);
-	paintFill.setColor(0xffc0a0b0);
+	paintFill.setColor(0xffd0b0c0);
 	paintFill.setStyle(Paint.Style.FILL);
     }
-
-    /*
-    BlockType() {
-    }
-    */
 
     void draw(Canvas canvas) {	
 	canvas.drawPath(path, paintFill);
