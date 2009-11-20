@@ -74,7 +74,7 @@ class BoardView extends View {
 	    float dy = y - downY;
 	    int idx = Math.round(dx), idy = Math.round(dy);
 	    if (board.moveTo(idx, idy)) {		
-		invalidate();
+		invalidate(borderX, borderY, width-borderX, width-borderY);
 		if (board.solvedNow()) {
 		    Toast.makeText(context, "Solved!", Toast.LENGTH_LONG).show();
 		}
