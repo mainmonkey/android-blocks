@@ -12,8 +12,6 @@ class Board {
 	RIGHT = 2,
 	UP    = 3;
 
-    static final int SIZE = Blocks.SIZE;
-
     Block blocks[];
     Block active;
     Block big;
@@ -31,8 +29,6 @@ class Board {
 	this.sizeY = sizeY;
 	this.endX  = endX;
 	this.endY  = endY;
-	width  = sizeX * SIZE;
-	height = sizeY * SIZE;
 	MAX_X = width  - 1;
 	MAX_Y = height - 1;
 	paint.setColor(0xffffffff);

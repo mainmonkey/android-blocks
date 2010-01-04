@@ -36,6 +36,9 @@ class BoardView extends View {
 
     private void update() {
 	if (board != null && width > 0) {
+            int s = (int) Math.max(width / board.sizeX, height / board.sizeY);            
+            board.width  = s * board.sizeX;
+            board.height = s * board.sizeY;
 	    borderY = (height - board.height) / 2;
 	    borderX = (width  - board.width)  / 2; 
 	}
@@ -74,7 +77,7 @@ class BoardView extends View {
 	    float dy = y - downY;
 	    int idx = Math.round(dx), idy = Math.round(dy);
 	    if (board.moveTo(idx, idy)) {		
-		invalidate(borderX, borderY, width-borderX, width-borderY);
+		invalidate(borderX, borderY, width-borderX, height-borderY);
 		if (board.solvedNow()) {
 		    Toast.makeText(context, "Solved!", Toast.LENGTH_LONG).show();
 		}
